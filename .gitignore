@@ -1,0 +1,5 @@
+build/
+dist/
+khoai.egg-info/
+__pycache__
+.*
