@@ -8,7 +8,7 @@ setuptools.setup(
     version="0.0.5",
     author="lehuynhduc",
     author_email="lhduc94@gmail.com",
-    description="A small example package",
+    description="A small datascience package",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/lhduc94",

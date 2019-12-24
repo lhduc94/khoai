@@ -1,8 +1,16 @@
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
-from sklearn.metrics import auc, roc_curve
+
+
+
 def reduce_mem_usage(df, verbose=True):
+    """ A function reduce memory of DataFrame.
+    Input:
+        - df: DataFrame
+        - veborse: Show mem. usage decreased
+    Output:
+        - DataFrame
+    """
     numerics = ['int16', 'int32', 'int64', 'float16', 'float32', 'float64']
     start_mem = df.memory_usage().sum() / 1024**2    
     for col in df.columns:
@@ -31,30 +39,3 @@ def reduce_mem_usage(df, verbose=True):
     end_mem = df.memory_usage().sum() / 1024**2
     if verbose: print('Mem. usage decreased to {:5.2f} Mb ({:.1f}% reduction)'.format(end_mem, 100 * (start_mem - end_mem) / start_mem))
     return df
-
-def plot_roc_curve(y_true,y_pred_prob):
-    '''
-	y_true: true label
-	y_pred: predicted label
-	return roc_auc
-    '''
-    plt.figure(figsize=(17,10))
-    fpr, tpr, thresholds = roc_curve(y_true, y_pred_prob)
-    roc_auc = auc(fpr, tpr) # compute area under the curve
-    plt.figure(figsize=(17,10))
-    plt.plot(fpr, tpr, label='ROC curve (area = %0.5f)' % (roc_auc))
-    plt.plot([0, 1], [0, 1], 'k--')
-    plt.xlim([0.0, 1.0])
-    plt.ylim([0.0, 1.05])
-    plt.xlabel('False Positive Rate')
-    plt.ylabel('True Positive Rate')
-    plt.title('Receiver operating characteristic')
-    plt.legend(loc="lower right")
-    ax2 = plt.gca().twinx()
-    ax2.plot(fpr, thresholds, markeredgecolor='r',linestyle='dashed', color='r')
-    ax2.set_ylabel('Threshold',color='r')
-    ax2.set_ylim([thresholds[-1],thresholds[0]])
-    ax2.set_xlim([fpr[0],fpr[-1]])
-    plt.show()
-
-    return roc_auc 

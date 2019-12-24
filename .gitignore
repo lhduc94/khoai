@@ -3,3 +3,4 @@ dist/
 khoai.egg-info/
 __pycache__
 .*
+*.ipynb
