@@ -14,7 +14,7 @@ def reduce_mem_usage(df, verbose=True):
     Output:
                 DataFrame
     """
-    
+
     numerics = ['int16', 'int32', 'int64', 'float16', 'float32', 'float64']
     start_mem = df.memory_usage().sum() / 1024**2
     for col in df.columns:
@@ -56,3 +56,12 @@ def reduce_mem_usage(df, verbose=True):
                                                              res)
 
     return df
+
+
+def calibrate(data, train_pop, target_pop, sampled_train_pop, sampled_target_pop):
+    """
+    """
+    A = data * (target_pop / train_pop) / (sampled_target_pop / sampled_train_pop)
+    B = (1 - data) * (1 - target_pop / train_pop) / (1 - sampled_target_pop / sampled_train_pop)
+    calibrated_data = A / (A+B)
+    return calibrated_data

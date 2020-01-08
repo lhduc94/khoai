@@ -6,7 +6,7 @@ from sklearn.metrics import auc, roc_curve
 
 
 def plot_roc_curve(y_true, y_pred_prob):
-    """ A function plot Roc AUC.
+    """A function plot Roc AUC.
     Parameters:
                 y_true: Array
                     True label
@@ -14,7 +14,7 @@ def plot_roc_curve(y_true, y_pred_prob):
                     Probability predicted label
     Output:
                 roc_auc
-    """
+        """
 
     plt.figure(figsize=(17, 10))
     fpr, tpr, thresholds = roc_curve(y_true, y_pred_prob)

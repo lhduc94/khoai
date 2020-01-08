@@ -6,20 +6,14 @@ import numpy as np
 
 
 def dist_with_miss(a, b, p=1, l=0.0):
-    """ A function compute a distance betwwen 2 array with missing value.
+    """ A function reduce memory of DataFrame.
     Parameters:
-                a: array
-                    Input Array.
-                b: array
-                    Input Array.
-                p: int
-                    The order of the norm of the difference
-                        in minkowski distance.
-                l: float
-                    The lambda value of missing value.
+                df: DataFrame
+                    A table of data.
+                veborse: bool
+                    Show mem. usage decreased.
     Output:
-                distance: float
-                    The distance between 2 array.
+                DataFrame
     """
 
     if(len(a) != len(b)):
