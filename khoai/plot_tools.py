@@ -2,12 +2,14 @@ import matplotlib.pyplot as plt
 from sklearn.metrics import auc, roc_curve
 
 def plot_roc_curve(y_true,y_pred_prob):
-    """ Plot Roc AUC.
-    Input:
-        - y_true: True label
-        - y_pred_prob: Probability predicted label
+    """ A function plot Roc AUC.
+    Parameters:
+        		y_true: Array
+					True label
+        		y_pred_prob: Array
+					Probability predicted label
 	Output:
-        - roc_auc
+        		roc_auc
     """
     plt.figure(figsize=(17,10))
     fpr, tpr, thresholds = roc_curve(y_true, y_pred_prob)
