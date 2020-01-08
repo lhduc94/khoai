@@ -1,3 +1,6 @@
+# coding=utf-8
+
+"""Data Frame Tools."""
 from scipy.spatial.distance import minkowski
 import numpy as np
 

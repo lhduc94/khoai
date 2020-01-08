@@ -1,8 +1,11 @@
+# coding=utf-8
+
+"""Plot Tools."""
 import matplotlib.pyplot as plt
 from sklearn.metrics import auc, roc_curve
 
 
-def plot_roc_curve(y_true,y_pred_prob):
+def plot_roc_curve(y_true, y_pred_prob):
     """ A function plot Roc AUC.
     Parameters:
                 y_true: Array
@@ -12,6 +15,7 @@ def plot_roc_curve(y_true,y_pred_prob):
     Output:
                 roc_auc
     """
+
     plt.figure(figsize=(17, 10))
     fpr, tpr, thresholds = roc_curve(y_true, y_pred_prob)
     roc_auc = auc(fpr, tpr)  # compute area under the curve
