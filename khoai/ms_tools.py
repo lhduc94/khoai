@@ -1,22 +1,26 @@
 # coding=utf-8
-
 """Data Frame Tools."""
 from scipy.spatial.distance import minkowski
 import numpy as np
 
 
 def dist_with_miss(a, b, p=1, l=0.0):
-    """ A function reduce memory of DataFrame.
+    """ A function compute a distance between 2 array with missing value.
     Parameters:
-                df: DataFrame
-                    A table of data.
-                veborse: bool
-                    Show mem. usage decreased.
+                a: array
+                    Input Array.
+                b: array
+                    Input Array.
+                p: int
+                    The order of the norm of the difference in minkowski distance.
+                l: float
+                    The lambda value of missing value.
     Output:
-                DataFrame
+                distance: float
+                    The distance between 2 array.
     """
 
-    if(len(a) != len(b)):
+    if len(a) != len(b):
         return np.inf
     a = np.array(a)
     b = np.array(b)

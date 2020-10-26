@@ -1,5 +1,4 @@
 # coding=utf-8
-
 """Data Frame Tools."""
 import numpy as np
 
@@ -9,7 +8,7 @@ def reduce_mem_usage(df, verbose=True):
     Parameters:
                 df: DataFrame
                     A table of data.
-                veborse: bool
+                verbose: bool
                     Show mem. usage decreased.
     Output:
                 DataFrame

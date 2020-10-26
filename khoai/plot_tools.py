@@ -1,5 +1,4 @@
 # coding=utf-8
-
 """Plot Tools."""
 import matplotlib.pyplot as plt
 from sklearn.metrics import auc, roc_curve
@@ -20,7 +19,7 @@ def plot_roc_curve(y_true, y_pred_prob):
     fpr, tpr, thresholds = roc_curve(y_true, y_pred_prob)
     roc_auc = auc(fpr, tpr)  # compute area under the curve
     plt.figure(figsize=(17, 10))
-    plt.plot(fpr, tpr, label='ROC curve (area = %0.5f)' % (roc_auc))
+    plt.plot(fpr, tpr, label='ROC curve (area = %0.5f)' % roc_auc)
     plt.plot([0, 1], [0, 1], 'k--')
     plt.xlim([0.0, 1.0])
     plt.ylim([0.0, 1.05])
