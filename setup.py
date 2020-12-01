@@ -5,13 +5,13 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="khoai",
-    version="0.0.9",
-    author="lehuynhduc",
+    version="0.0.9_1",
+    author="Lê Huỳnh Đức",
     author_email="lhduc94@gmail.com",
     description="A small datascience package",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/lhduc94",
+    url="https://github.com/lhduc94/khoai",
     packages=setuptools.find_packages(),
     classifiers=[
         "Programming Language :: Python :: 3",

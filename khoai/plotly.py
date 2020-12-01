@@ -11,7 +11,7 @@ def plot_roc_curve(y_true, y_pred_prob, show_threshold=False):
                 y_true: Array
                     True label
                 y_pred_prob: Array
-                    Probability predicted label
+                    Probability predicted label\
                 show_threshold: Bool
                     Show threshold
     Output:

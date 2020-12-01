@@ -1,7 +1,7 @@
-# khoai
-Package for data science
+# KHOAI - Package for data science
 
-## install
+**User installation**
+
 You can install my package via `pip`
 ```
 pip install khoai
@@ -14,5 +14,5 @@ or install from my source code by following:
 - And install my package:
 ```python setup.py install```
 
-## Introduction
-My package have 3 tools: DataFrame tools, Metrics tool and Plot tool
+Documentation:
+https://medium.com/lehuynhduc/khoai-package-3f7c75b37485
