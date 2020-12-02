@@ -6,18 +6,19 @@ import numpy as np
 
 
 def plot_roc_curve(y_true, y_pred_prob, show_threshold=False):
-    """A function plot Roc AUC.
-    Parameters:
-                y_true: Array
-                    True label
-                y_pred_prob: Array
-                    Probability predicted label\
-                show_threshold: Bool
-                    Show threshold
-    Output:
-                figure: Figure
-                roc_auc: AUC value
-        """
+    """
+        A function plot Roc AUC.
+                Parameters:
+                            y_true: Array
+                                True label
+                            y_pred_prob: Array
+                                Probability predicted label\
+                            show_threshold: Bool
+                                Show threshold
+                Output:
+                            figure: Figure
+                            roc_auc: AUC value
+    """
 
     figure = plt.figure(figsize=(17, 10))
     fpr, tpr, thresholds = roc_curve(y_true, y_pred_prob)
@@ -47,18 +48,19 @@ def plot_roc_curve(y_true, y_pred_prob, show_threshold=False):
 
 
 def plot_multi_roc_curve(y_trues, y_pred_probs, labels):
-    """A function plot Roc AUC.
-    Parameters:
-                y_trues: Array of Array
-                    True label
-                y_pred_probs: Array of Array
-                    Probability predicted label
-                labels: List
-                    List of label
-    Output:
-                figure: Figure
-                roc_aucs: List AUC value
-        """
+    """
+        A function plot Roc AUC.
+                Parameters:
+                            y_trues: Array of Array
+                                True label
+                            y_pred_probs: Array of Array
+                                Probability predicted label
+                            labels: List
+                                List of label
+                Output:
+                            figure: Figure
+                            roc_aucs: List AUC value
+    """
 
     fig = plt.figure(figsize=(17, 10))
     roc_aucs = []

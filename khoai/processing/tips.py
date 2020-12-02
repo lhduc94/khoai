@@ -21,5 +21,5 @@ def calibrate(data, train_pop, target_pop, sampled_train_pop, sampled_target_pop
     """
     a = data * (target_pop / train_pop) / (sampled_target_pop / sampled_train_pop)
     b = (1 - data) * (1 - target_pop / train_pop) / (1 - sampled_target_pop / sampled_train_pop)
-    calibrated_data = a / (a+b)
+    calibrated_data = a / (a + b)
     return calibrated_data
