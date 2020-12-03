@@ -1,9 +1,13 @@
-from tqdm import tqdm
+import numpy as np
 from scipy.optimize import minimize
 from sklearn.model_selection import KFold
 from typing import List, Dict, Callable, NamedTuple, Optional, Tuple, Any
-from sklearn.metrics import log_loss
-import numpy as np
+from tqdm import tqdm
+import torch
+import torch.nn as nn
+
+
+DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
 class Blender(object):
@@ -37,3 +41,22 @@ class Blender(object):
                     weight_list.append(res.x)
         mean_weight = np.mean(weight_list, axis=0)
         return mean_weight
+
+
+class CNNStacking(nn.Module):
+    def __init__(self, n_features, n_labels):
+        super(CNNStacking, self).__init__()
+
+        self.sq = nn.Sequential(
+            nn.Conv2d(in_channels=1, out_channels=8, kernel_size=(3, 1), bias=False),
+            nn.ReLU(),
+            nn.Conv2d(in_channels=8, out_channels=16, kernel_size=(2, 1), bias=False),
+            nn.ReLU(),
+            nn.Flatten(),
+            nn.Linear(in_features=16 * n_labels, out_features=4 * n_labels),
+            nn.ReLU(),
+            nn.Linear(in_features=4 * n_labels, out_features=n_labels),
+        )
+
+    def forward(self, x):
+        return self.sq(x)

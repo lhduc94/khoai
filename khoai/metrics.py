@@ -124,15 +124,15 @@ def sigmoid(x):
     return 1 / (1 + np.exp(-x))
 
 
-def pk(actual, predicted, k=10):
+def pk(y_true, y_pred, k=10):
     """
         Computes the precision at k.
         This function computes the precision at k between two lists of items.
                 Parameters:
 
-                            actual: Array
+                            y_true: Array
                                      A Array of elements that are to be predicted (order doesn't matter)
-                            predicted: Array
+                            y_pred: Array
                                         A Array of predicted elements (order does matter)
                             k: int, optional
                                 The maximum number of predicted elements
@@ -141,84 +141,42 @@ def pk(actual, predicted, k=10):
                             score: double
                                 The precision at k over the input lists
         """
-    if not actual:
+    if not y_pred or not y_true:
         return 0.0
-    if len(predicted) > k:
-        predicted = predicted[:k]
-    predicted = set(predicted)
-    actual = set(actual)
-    hit = predicted & actual
+    if len(y_pred) > k:
+        y_pred = y_pred[:k]
+    num_hits = 0
+    for p in y_pred:
+        if p in y_true:
+            num_hits += 1
+    score = num_hits / len(y_pred)
+    return score
 
-    return len(hit) / len(predicted)
 
-
-def mpk(actual, predicted, k=10):
+def apk(y_true, y_pred, k=10):
     """
-        Computes the mean precision at k.
-        This function computes the mean average precision at k between two lists of lists of items.
+        Computes the average precision at k.
+        This function computes the precision at k between two lists of items.
+        Source:
                 Parameters:
 
-                            actual: Array
+                            y_true: Array
                                      A Array of elements that are to be predicted (order doesn't matter)
-                            predicted: Array
+                            y_pred: Array
                                         A Array of predicted elements (order does matter)
                             k: int, optional
                                 The maximum number of predicted elements
                 Output:
+
                             score: double
-                The mean  precision at k over the input lists
-    """
-    return np.mean([pk(a, p, k) for a, p in zip(actual, predicted)])
-
-
-def apk(actual, predicted, k=10):
-    """
-        Computes the average precision at k.
-        This function computes the average precision at k between two lists of items.
-                Parameters:
-
-                            actual : Array
-                                     A Array of elements that are to be predicted (order doesn't matter)
-                            predicted : Array
-                                        A Array of predicted elements (order does matter)
-                            k : int, optional
-                                The maximum number of predicted elements
-                Output:
-
-                            score : double
-                                The average precision at k over the input lists
-    """
-    if len(predicted) > k:
-        predicted = predicted[:k]
-
-    score = 0.0
-    num_hits = 0.0
-
-    for i, p in enumerate(predicted):
-        if p in actual and p not in predicted[:i]:
-            num_hits += 1.0
-            score += num_hits / (i+1.0)
-
-    if not actual:
+                                The precision at k over the input lists
+        """
+    if not y_pred or not y_true:
         return 0.0
-
-    return score / min(len(actual), k)
-
-
-def mapk(actual, predicted, k=10):
-    """
-    Computes the mean average precision at k.
-    This function computes the mean average precision at k between two lists of lists of items.
-            Parameters:
-
-                        actual : Array
-                                 A Array of elements that are to be predicted (order doesn't matter)
-                        predicted : Array
-                                    A Array of predicted elements (order does matter)
-                        k : int, optional
-                            The maximum number of predicted elements
-            Output:
-                        score : double
-            The mean average precision at k over the input lists
-    """
-    return np.mean([apk(a, p, k) for a, p in zip(actual, predicted)])
+    if len(y_pred) > k:
+        y_pred = y_pred[:k]
+    pks = []
+    for i, p in enumerate(y_pred):
+        if p in y_true:
+            pks.append(pk(y_true, y_pred[:i+1]), i+1)
+    return np.mean(pks)
