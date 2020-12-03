@@ -15,7 +15,7 @@ def plot_roc_curve(y_true, y_pred_prob, show_threshold=False):
                                 Probability predicted label\
                             show_threshold: Bool
                                 Show threshold
-                Output:
+                Returns:
                             figure: Figure
                             roc_auc: AUC value
     """
@@ -57,7 +57,7 @@ def plot_multi_roc_curve(y_trues, y_pred_probs, labels):
                                 Probability predicted label
                             labels: List
                                 List of label
-                Output:
+                Returns:
                             figure: Figure
                             roc_aucs: List AUC value
     """

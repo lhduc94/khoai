@@ -4,15 +4,19 @@ from scipy.spatial.distance import minkowski
 import numpy as np
 
 
-def levenshtein(s1, s2, normalize=False):
-    """ A function computes the levenshtein distance between two string.
-
-        s1: String
-        s2: String
-    normalize: divide edit distance by maximum length if true
+def levenshtein_distance(s1, s2, normalize=False):
+    """
+        A function computes the levenshtein distance between two string.
+                Parameters:
+                                s1: String
+                                s2: String
+                                normalize: bool
+                                    divide edit distance by maximum length if true
+                Returns:
+                                The levenshtein distance
     """
     if len(s1) < len(s2):
-        return levenshtein(s2, s1, normalize)
+        return levenshtein_distance(s2, s1, normalize)
     if not s2:
         return len(s1)
     current_row = None
@@ -33,19 +37,20 @@ def levenshtein(s1, s2, normalize=False):
 
 
 def dist_with_miss(a, b, p=1, l=0.0):
-    """ A function computes a distance between 2 array with missing value.
-            Parameters:
-                        a: array
-                            Input Array.
-                        b: array
-                            Input Array.
-                        p: int
-                            The order of the norm of the difference in minkowski distance.
-                        l: float
-                            The lambda value of missing value.
-            Output:
-                        distance: float
-                            The distance between 2 array.
+    """
+        A function computes a distance between 2 array with missing value.
+                Parameters:
+                            a: array
+                                Input Array.
+                            b: array
+                                Input Array.
+                            p: int
+                                The order of the norm of the difference in minkowski distance.
+                            l: float
+                                The lambda value of missing value.
+                Returns:
+                            distance: float
+                                The distance between 2 array.
     """
 
     if len(a) != len(b):
@@ -61,13 +66,14 @@ def dist_with_miss(a, b, p=1, l=0.0):
 def jaccard_similarity(A, B):
     """
         A function computes a Jaccard_e similarity of 2 set.
-            Parameters:
-                        A: Set or List.
-                            Input
-                        B: Set or List.
-                            Input
-            Output:
-                        score: double
+                Parameters:
+                            A: Set or List.
+                                Input
+                            B: Set or List.
+                                Input
+                Returns:
+                            score: double
+                                Jaccard similarity
     """
 
     A = set(A)
@@ -88,7 +94,7 @@ def mape(a, b):
                                 Input Array.
                             b: array
                                 Input Array.
-                Output:
+                Returns:
                             MAPE: double
     """
     a = np.array(a)
@@ -105,23 +111,13 @@ def smape(a, b):
                                 Input Array.
                             b: array
                                 Input Array.
-                Output:
+                Returns:
                             SMAPE: double
     """
     a = np.array(a)
     b = np.array(b)
     mask = a != 0
     return (np.abs(a - b) / (np.abs(a) + np.abs(b)))[mask].mean() * 100
-
-
-def sigmoid(x):
-    """Sigmoid
-            Parameter:
-                        x: array or a number
-            Output:
-                        sigmoid value
-    """
-    return 1 / (1 + np.exp(-x))
 
 
 def pk(y_true, y_pred, k=10):
@@ -136,20 +132,22 @@ def pk(y_true, y_pred, k=10):
                                         A Array of predicted elements (order does matter)
                             k: int, optional
                                 The maximum number of predicted elements
-                Output:
+                Returns:
 
                             score: double
                                 The precision at k over the input lists
+        Example :
         """
     if not y_pred or not y_true:
         return 0.0
     if len(y_pred) > k:
         y_pred = y_pred[:k]
-    num_hits = 0
-    for p in y_pred:
-        if p in y_true:
-            num_hits += 1
-    score = num_hits / len(y_pred)
+
+    mask = [0]*len(y_pred)
+    for i, p in enumerate(y_pred):
+        mask[i] = p in y_true
+    score = np.mean(mask)
+
     return score
 
 
@@ -157,7 +155,7 @@ def apk(y_true, y_pred, k=10):
     """
         Computes the average precision at k.
         This function computes the precision at k between two lists of items.
-        Source:
+        Source: https://web.stanford.edu/class/cs276/handouts/EvaluationNew-handout-1-per.pdf
                 Parameters:
 
                             y_true: Array
@@ -175,8 +173,14 @@ def apk(y_true, y_pred, k=10):
         return 0.0
     if len(y_pred) > k:
         y_pred = y_pred[:k]
-    pks = []
+
+    mask = [0] * len(y_pred)
     for i, p in enumerate(y_pred):
-        if p in y_true:
-            pks.append(pk(y_true, y_pred[:i+1]), i+1)
-    return np.mean(pks)
+        mask[i] = p in y_true
+    pks = []
+    for i, m in enumerate(mask):
+        if m == 1:
+            pk_score = np.mean(mask[:i+1])
+            pks.append(pk_score)
+    score = np.mean(pks)
+    return score
