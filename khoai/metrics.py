@@ -22,9 +22,9 @@ def levenshtein_distance(s1, s2, normalize=False):
     current_row = None
     previous_row = range(len(s2) + 1)
     for i, c1 in enumerate(s1):
-        current_row = [i+1]
+        current_row = [i + 1]
         for j, c2 in enumerate(s2):
-            insertions = previous_row[j+1] + 1
+            insertions = previous_row[j + 1] + 1
             deletions = current_row[j] + 1
             substitutions = previous_row[j] + (c1 != c2)
             current_row.append(min(insertions, deletions, substitutions))
@@ -127,9 +127,9 @@ def pk(y_true, y_pred, k=10):
                 Parameters:
 
                             y_true: Array
-                                     A Array of elements that are to be predicted (order doesn't matter)
+                                    A Array of elements that are to be predicted (order doesn't matter)
                             y_pred: Array
-                                        A Array of predicted elements (order does matter)
+                                    A Array of predicted elements (order does matter)
                             k: int, optional
                                 The maximum number of predicted elements
                 Returns:
@@ -142,45 +142,52 @@ def pk(y_true, y_pred, k=10):
         return 0.0
     if len(y_pred) > k:
         y_pred = y_pred[:k]
-
-    mask = [0]*len(y_pred)
+    num_hits = 0.0
     for i, p in enumerate(y_pred):
-        mask[i] = p in y_true
-    score = np.mean(mask)
+        if p in y_true:
+            num_hits += 1.0
+    return num_hits / k
 
-    return score
 
-
-def apk(y_true, y_pred, k=10):
+def apk(y_true, y_pred, k=10, normalize='min'):
     """
         Computes the average precision at k.
-        This function computes the precision at k between two lists of items.
-        Source: https://web.stanford.edu/class/cs276/handouts/EvaluationNew-handout-1-per.pdf
+        This function computes the average precision at k between two lists of
+        items.
                 Parameters:
-
-                            y_true: Array
-                                     A Array of elements that are to be predicted (order doesn't matter)
-                            y_pred: Array
-                                        A Array of predicted elements (order does matter)
+                            y_true: list
+                                    A list of elements that are to be predicted (order doesn't matter)
+                            y_pred: list
+                                    A list of predicted elements (order does matter)
                             k: int, optional
                                 The maximum number of predicted elements
-                Output:
-
-                            score: double
-                                The precision at k over the input lists
-        """
-    if not y_pred or not y_true:
+                            normalize: type of normalize
+                                'k': normalize by top k
+                                'm': normalize by number of relevant documents (length of y_true)
+                                'min': normalize by min(m,k)
+                Returns
+                            score : double
+                                The average precision at k over the input lists
+    """
+    assert normalize in ['k', 'm', 'min'], "normalize should be in ['k', 'm', min']"
+    if not y_true or not y_pred:
         return 0.0
     if len(y_pred) > k:
         y_pred = y_pred[:k]
 
-    mask = [0] * len(y_pred)
+    score = 0.0
+    num_hits = 0.0
+
     for i, p in enumerate(y_pred):
-        mask[i] = p in y_true
-    pks = []
-    for i, m in enumerate(mask):
-        if m == 1:
-            pk_score = np.mean(mask[:i+1])
-            pks.append(pk_score)
-    score = np.mean(pks)
+        if p in y_true:
+            num_hits += 1.0
+            p_at_k = num_hits / (i + 1.0)
+            score += p_at_k * 1  # (p@k * rel(k))
+
+    if normalize == 'k':
+        score = score / k
+    elif normalize == 'm':
+        score = score / len(y_true)
+    else:
+        score = score / min(len(y_true), k)
     return score
