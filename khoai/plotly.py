@@ -5,9 +5,10 @@ from sklearn.metrics import auc, roc_curve
 import seaborn as sns
 import numpy as np
 import pandas as pd
+from typing import List
 
 
-def plot_roc_curve(y_true, y_pred_prob, show_threshold=False):
+def plot_roc_curve(y_true, y_pred_prob, show_threshold=False, **params):
     """
         A function plot Roc AUC.
                 Parameters:
@@ -22,10 +23,9 @@ def plot_roc_curve(y_true, y_pred_prob, show_threshold=False):
                             roc_auc: AUC value
     """
 
-    figure = plt.figure(figsize=(17, 10))
+    figure = plt.figure(figsize=params.get('figsize', (17, 10)))
     fpr, tpr, thresholds = roc_curve(y_true, y_pred_prob)
     roc_auc = auc(fpr, tpr)  # compute area under the curve
-    plt.figure(figsize=(17, 10))
     plt.plot(fpr, tpr, label='ROC curve (area = %0.5f)' % roc_auc)
     plt.plot([0, 1], [0, 1], 'k--')
     plt.xlim([-0.05, 1.05])
@@ -49,7 +49,7 @@ def plot_roc_curve(y_true, y_pred_prob, show_threshold=False):
     return figure, roc_auc
 
 
-def plot_multi_roc_curve(y_trues, y_pred_probs, labels):
+def plot_multi_roc_curve(y_trues, y_pred_probs, labels, **params):
     """
         A function plot Roc AUC.
                 Parameters:
@@ -64,7 +64,7 @@ def plot_multi_roc_curve(y_trues, y_pred_probs, labels):
                             roc_aucs: List AUC value
     """
 
-    fig = plt.figure(figsize=(17, 10))
+    figure = plt.figure(figsize=params.get('figsize', (17, 10)))
     roc_aucs = []
     for y_true, y_pred_prob, label in zip(y_trues, y_pred_probs, labels):
         fpr, tpr, thresholds = roc_curve(y_true, y_pred_prob)
@@ -84,7 +84,7 @@ def plot_multi_roc_curve(y_trues, y_pred_probs, labels):
 
     plt.show()
 
-    return fig, roc_aucs
+    return figure, roc_aucs
 
 
 def heatmap(x, y, size, color, **params):
@@ -97,7 +97,7 @@ def heatmap(x, y, size, color, **params):
         ind = int(val_position * (n_colors - 1))  # target index in the color palette
         return palette[ind]
 
-    plt.figure(figsize=params.get('figsize', None))
+    figure = plt.figure(figsize=params.get('figsize', None))
     plot_grid = plt.GridSpec(1, 15, hspace=0.2, wspace=0.1)  # Setup a 1x15 grid
     ax = plt.subplot(plot_grid[:, :-1])
 
@@ -142,19 +142,32 @@ def heatmap(x, y, size, color, **params):
     ax.set_xticks([])  # Remove horizontal ticks
     ax.set_yticks(np.linspace(min(bar_y), max(bar_y), 3))  # Show vertical ticks for min, middle and max
     ax.yaxis.tick_right()
+    return figure
 
 
-def plot_corr(df, columns=None, **params):
+def plot_corr(df: pd.DataFrame, columns=None, **params):
+    """
+            A function plot correlation heatmap.
+                    Parameters:
+                                df: DataFrame
+                                    True label
+                                columns: List of columns
+                                    If columns = None, get all columns of df
+                                **params: The parameters of figure.
+                                    figsize: Tuple of figure size. Default (17,10)
+                                    n_colors: Number of color. Default 256
+                                    size_scale: Scale point. Default 500
+
+                    Returns:
+                                figure: Figure
+        """
+
     if columns is None:
         columns = df.columns
     corr = df[columns].corr()
     corr = pd.melt(corr.reset_index(),
                    id_vars='index')  # Unpivot the dataframe, so we can get pair of arrays for x and y
     corr.columns = ['x', 'y', 'value']
-    heatmap(
-        x=corr['x'],
-        y=corr['y'],
-        size=corr['value'].abs(),
-        color=corr['value'],
-        **params
-    )
+    figure = heatmap(x=corr['x'], y=corr['y'], size=corr['value'].abs(), color=corr['value'], **params)
+
+    return figure
