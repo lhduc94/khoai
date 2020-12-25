@@ -15,7 +15,7 @@ def plot_roc_curve(y_true, y_pred_prob, show_threshold=False, **params):
                             y_true: Array
                                 True label
                             y_pred_prob: Array
-                                Probability predicted label\
+                                Probability predicted label
                             show_threshold: Bool
                                 Show threshold
                 Returns:
@@ -25,7 +25,7 @@ def plot_roc_curve(y_true, y_pred_prob, show_threshold=False, **params):
 
     figure = plt.figure(figsize=params.get('figsize', (17, 10)))
     fpr, tpr, thresholds = roc_curve(y_true, y_pred_prob)
-    roc_auc = auc(fpr, tpr)  # compute area under the curve
+    roc_auc = auc(fpr, tpr)
     plt.plot(fpr, tpr, label='ROC curve (area = %0.5f)' % roc_auc)
     plt.plot([0, 1], [0, 1], 'k--')
     plt.xlim([-0.05, 1.05])
@@ -68,7 +68,7 @@ def plot_multi_roc_curve(y_trues, y_pred_probs, labels, **params):
     roc_aucs = []
     for y_true, y_pred_prob, label in zip(y_trues, y_pred_probs, labels):
         fpr, tpr, thresholds = roc_curve(y_true, y_pred_prob)
-        roc_auc = auc(fpr, tpr)  # compute area under the curve
+        roc_auc = auc(fpr, tpr)
         roc_aucs.append(roc_auc)
         plt.plot(fpr, tpr, label=f'{label} ROC curve (area = %0.5f)' % roc_auc)
 
@@ -88,20 +88,19 @@ def plot_multi_roc_curve(y_trues, y_pred_probs, labels, **params):
 
 
 def heatmap(x, y, size, color, **params):
-    n_colors = params.get('n_colors', 256)  # Use 256 colors for the diverging color palette
-    palette = sns.diverging_palette(20, 220, n=n_colors)  # Create the palette
+    n_colors = params.get('n_colors', 256)
+    palette = sns.diverging_palette(20, 220, n=n_colors)
     color_min, color_max = [-1, 1]
 
     def value_to_color(val):
         val_position = float((val - color_min)) / (color_max - color_min)
-        ind = int(val_position * (n_colors - 1))  # target index in the color palette
+        ind = int(val_position * (n_colors - 1))
         return palette[ind]
 
     figure = plt.figure(figsize=params.get('figsize', None))
-    plot_grid = plt.GridSpec(1, 15, hspace=0.2, wspace=0.1)  # Setup a 1x15 grid
+    plot_grid = plt.GridSpec(1, 15, hspace=0.2, wspace=0.1)
     ax = plt.subplot(plot_grid[:, :-1])
 
-    # Mapping from column names to integer coordinates
     x_labels = [v for v in sorted(x.unique())]
     y_labels = [v for v in sorted(y.unique())]
     x_to_num = {p[1]: p[0] for p in enumerate(x_labels)}
@@ -110,37 +109,35 @@ def heatmap(x, y, size, color, **params):
     ax.scatter(
         x=x.map(x_to_num),
         y=y.map(y_to_num),
-        s=size * params.get('size_scale', 500),  # Vector of square sizes, proportional to size parameter
+        s=size * params.get('size_scale', 500),
         c=color.map(value_to_color),
-        marker=params.get('marker', 's')  # Use square as scatterplot marker
+        marker=params.get('marker', 's')
     )
 
-    # Show column labels on the axes
     ax.set_xticks([x_to_num[v] for v in x_labels])
     ax.set_xticklabels(x_labels, rotation=params.get('x_rotation', 45), horizontalalignment='right')
     ax.set_yticks([y_to_num[v] for v in y_labels])
     ax.set_yticklabels(y_labels)
 
-    # bar plot
-    ax = plt.subplot(plot_grid[:, -1])  # Use the rightmost column of the plot
+    ax = plt.subplot(plot_grid[:, -1])
 
-    col_x = [0] * len(palette)  # Fixed x coordinate for the bars
-    bar_y = np.linspace(color_min, color_max, n_colors)  # y coordinates for each of the n_colors bars
+    col_x = [0] * len(palette)
+    bar_y = np.linspace(color_min, color_max, n_colors)
 
     bar_height = bar_y[1] - bar_y[0]
     ax.barh(
         y=bar_y,
-        width=[5] * len(palette),  # Make bars 5 units wide
-        left=col_x,  # Make bars start at 0
+        width=[5] * len(palette),
+        left=col_x,
         height=bar_height,
         color=palette,
         linewidth=0
     )
-    ax.set_xlim(1, 2)  # Bars are going from 0 to 5, so lets crop the plot somewhere in the middle
-    ax.grid(False)  # Hide grid
-    ax.set_facecolor('white')  # Make background white
-    ax.set_xticks([])  # Remove horizontal ticks
-    ax.set_yticks(np.linspace(min(bar_y), max(bar_y), 3))  # Show vertical ticks for min, middle and max
+    ax.set_xlim(1, 2)
+    ax.grid(False)
+    ax.set_facecolor('white')
+    ax.set_xticks([])
+    ax.set_yticks(np.linspace(min(bar_y), max(bar_y), 3))
     ax.yaxis.tick_right()
     return figure
 
@@ -166,7 +163,7 @@ def plot_corr(df: pd.DataFrame, columns=None, **params):
         columns = df.columns
     corr = df[columns].corr()
     corr = pd.melt(corr.reset_index(),
-                   id_vars='index')  # Unpivot the dataframe, so we can get pair of arrays for x and y
+                   id_vars='index')
     corr.columns = ['x', 'y', 'value']
     figure = heatmap(x=corr['x'], y=corr['y'], size=corr['value'].abs(), color=corr['value'], **params)
 

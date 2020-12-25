@@ -2,6 +2,51 @@
 """Metrics Tools."""
 from scipy.spatial.distance import minkowski
 import numpy as np
+import numbers
+
+
+def _num_samples(x):
+    """Return number of samples in array-like x."""
+    message = 'Expected sequence or array-like, got %s' % type(x)
+    if hasattr(x, 'fit') and callable(x.fit):
+        # Don't get num_samples from an ensembles length!
+        raise TypeError(message)
+
+    if not hasattr(x, '__len__') and not hasattr(x, 'shape'):
+        if hasattr(x, '__array__'):
+            x = np.asarray(x)
+        else:
+            raise TypeError(message)
+
+    if hasattr(x, 'shape') and x.shape is not None:
+        if len(x.shape) == 0:
+            raise TypeError("Singleton array %r cannot be considered"
+                            " a valid collection." % x)
+        # Check that shape is returning an integer or default to len
+        # Dask dataframes may not return numeric shape[0] value
+        if isinstance(x.shape[0], numbers.Integral):
+            return x.shape[0]
+
+    try:
+        return len(x)
+    except TypeError:
+        raise TypeError(message)
+
+
+def check_consistent_length(*arrays):
+    """Check that all arrays have consistent first dimensions.
+    Checks whether all objects in arrays have the same shape or length.
+    Parameters
+    ----------
+    *arrays : list or tuple of input objects.
+        Objects that will be checked for consistent length.
+    """
+
+    lengths = [_num_samples(X) for X in arrays if X is not None]
+    uniques = np.unique(lengths)
+    if len(uniques) > 1:
+        raise ValueError("Found input variables with inconsistent numbers of"
+                         " samples: %r" % [int(l) for l in lengths])
 
 
 def levenshtein_distance(s1, s2, normalize=False):
@@ -53,8 +98,7 @@ def dist_with_miss(a, b, p=1, l=0.0):
                                 The distance between 2 array.
     """
 
-    if len(a) != len(b):
-        return np.inf
+    check_consistent_length(a, b)
     a = np.array(a)
     b = np.array(b)
     ls = l * np.ones(len(a))
@@ -67,15 +111,16 @@ def jaccard_similarity(A, B):
     """
         A function computes a Jaccard_e similarity of 2 set.
                 Parameters:
-                            A: Set or List.
+                            A: Set or List Integer of String.
                                 Input
-                            B: Set or List.
+                            B: Set or List Integer or Str.
                                 Input
                 Returns:
                             score: double
                                 Jaccard similarity
     """
-
+    if len(A) == 0 or len(B) == 0:
+        return 0.0
     A = set(A)
     B = set(B)
     X = set(A) & set(B)
@@ -86,38 +131,93 @@ def jaccard_similarity(A, B):
     return score
 
 
-def mape(a, b):
+def mae(y_true, y_pred, sample_weight=None):
+    """
+        A function computes a mean absolute error between 2 array with missing value.
+                Parameters:
+                            y_true: array
+                                Input Array.
+                            y_pred: array
+                                Input Array.
+                            sample_weight: array
+                                Sample weights
+                Returns:
+                            MAE
+    """
+    check_consistent_length(y_true, y_pred, sample_weight)
+    y_true = np.array(y_true)
+    y_pred = np.array(y_pred)
+    return np.average(np.abs(y_true - y_pred), weights=sample_weight, axis=0)
+
+
+def mse(y_true, y_pred, sample_weight=None):
+    """
+        A function computes a mean squared error between 2 array with missing value.
+                Parameters:
+                            y_true: array
+                                Input Array.
+                            y_pred: array
+                                Input Array.
+                            sample_weight: array
+                                Sample weights
+                Returns:
+                            MSE
+    """
+    check_consistent_length(y_true, y_pred, sample_weight)
+    y_true = np.array(y_true)
+    y_pred = np.array(y_pred)
+    return np.average((y_true - y_pred)**2, weights=sample_weight, axis=0)
+
+
+def rmse(y_true, y_pred, sample_weight=None):
+    """
+        A function computes a mean squared error between 2 array with missing value.
+                Parameters:
+                            y_true: array
+                                Input Array.
+                            y_pred: array
+                                Input Array.
+                            sample_weight: array
+                                Sample weights
+                Returns:
+                            RMSE
+    """
+    return np.sqrt(mse(y_true, y_pred, sample_weight))
+
+
+def mape(y_true, y_pred):
     """
         A function computes a MAPE between 2 array with missing value.
                 Parameters:
-                            a: array
+                            y_true: array
                                 Input Array.
-                            b: array
+                            y_pred: array
                                 Input Array.
                 Returns:
                             MAPE: double
     """
-    a = np.array(a)
-    b = np.array(b)
-    mask = a != 0
-    return (np.abs(a - b) / a)[mask].mean() * 100
+    check_consistent_length(y_true, y_pred)
+    y_true = np.array(y_true)
+    y_pred = np.array(y_pred)
+    mask = y_true != 0
+    return (np.abs(y_true - y_pred) / y_true)[mask].mean() * 100
 
 
-def smape(a, b):
+def smape(y_true, y_pred):
     """
         A function computes a SMAPE between 2 array with missing value.
                 Parameters:
-                            a: array
+                            y_true: array
                                 Input Array.
-                            b: array
+                            y_pred: array
                                 Input Array.
                 Returns:
                             SMAPE: double
     """
-    a = np.array(a)
-    b = np.array(b)
-    mask = a != 0
-    return (np.abs(a - b) / (np.abs(a) + np.abs(b)))[mask].mean() * 100
+    y_true = np.array(y_true)
+    y_pred = np.array(y_pred)
+    mask = y_true != 0
+    return (np.abs(y_true - y_pred) / (np.abs(y_true) + np.abs(y_pred)))[mask].mean() * 100
 
 
 def pk(y_true, y_pred, k=10):
@@ -191,3 +291,4 @@ def apk(y_true, y_pred, k=10, normalize='min'):
     else:
         score = score / min(len(y_true), k)
     return score
+
