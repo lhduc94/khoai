@@ -1,8 +1,12 @@
 class PosTagKeywordExtractor:
     """Keyword extraction."""
 
-    def __init__(self, stopwords=[], min_len=1, max_len=10, determiner='__'):
-        self.stopwords = stopwords
+    def __init__(self, stopwords=None, min_len=1, max_len=10, determiner='__'):
+
+        if stopwords is None:
+            self.stopwords = []
+        else:
+            self.stopwords = stopwords
         self.min_len = min_len
         self.max_len = max_len
         self.determiner = determiner
@@ -55,8 +59,12 @@ class PosTagKeywordExtractor:
             i += 1
         return new_tokens, new_postags
 
-    def extract_phrase(self, tokens, postags, left_terms=['V', 'M'], right_terms=['A', 'V', 'M']):
+    def extract_phrase(self, tokens, postags, left_terms=None, right_terms=None):
         """Extract phrase."""
+        if left_terms is None:
+            left_terms = ['V', 'M']
+        if right_terms is None:
+            right_terms = ['A', 'V', 'M']
         s = []
         i = 0
         head = 0
