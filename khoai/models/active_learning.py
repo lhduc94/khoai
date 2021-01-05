@@ -29,7 +29,7 @@ class LeastConfidenceAL(SamplingMethod):
         sorted_y_pred_prob = np.sort(y_pred_prob)
         argmax_y_pred = sorted_y_pred_prob[:, -1]
         lc = 1 - argmax_y_pred
-        rank_ind = np.argsort(lc)
+        rank_ind = np.argsort(lc)[::-1]
         rank_ind = [i for i in rank_ind if i not in already_selected]
         samples = rank_ind[:N]
         return samples
@@ -48,7 +48,7 @@ class MarginAL(SamplingMethod):
             already_selected = []
         assert y_pred_prob.shape[1] > 1, "least 2 probability"
         sorted_y_pred_prob = np.sort(y_pred_prob)
-        min_margin = sorted_y_pred_prob[:, -2] - sorted_y_pred_prob[:, -1]
+        min_margin = sorted_y_pred_prob[:, -1] - sorted_y_pred_prob[:, -2]
         rank_ind = np.argsort(min_margin)
         rank_ind = [i for i in rank_ind if i not in already_selected]
         samples = rank_ind[:N]
