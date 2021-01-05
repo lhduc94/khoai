@@ -30,4 +30,5 @@ class LeastConfidenceAL(SamplingMethod):
         rank_ind = [i for i in rank_ind if i not in already_selected]
         uncertain_samples = rank_ind[:N]
         certain_samples = list(np.where(uncertainty - self.threshold <= 1E-6)[0])
+        self.uncertainty = uncertainty
         return certain_samples, uncertain_samples
