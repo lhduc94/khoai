@@ -15,7 +15,7 @@ class SamplingMethod(object):
         return
 
 
-class LeastConfiDence(SamplingMethod):
+class LeastConfidenceAL(SamplingMethod):
     def __init__(self):
         return
 
@@ -36,7 +36,7 @@ class LeastConfiDence(SamplingMethod):
 
 
 class MarginAL(SamplingMethod):
-
+    """https://arxiv.org/pdf/1906.00025v1.pdf"""
     def __init__(self):
         return
 
@@ -55,8 +55,8 @@ class MarginAL(SamplingMethod):
         return samples
 
 
-class Entropy(SamplingMethod):
-
+class EntropyAL(SamplingMethod):
+    """https://www.aclweb.org/anthology/C08-1143.pdf"""
     def __init__(self):
         return
 
@@ -76,7 +76,7 @@ class Entropy(SamplingMethod):
         return samples
 
 
-class GraphDensity(SamplingMethod):
+class GraphDensityAL(SamplingMethod):
     """https://www.mpi-inf.mpg.de/fileadmin/inf/d2/Research_projects_files/EbertCVPR2012.pdf"""
 
     def __init__(self, X, n_neighbors=10):
