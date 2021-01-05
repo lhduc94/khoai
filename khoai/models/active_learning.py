@@ -15,7 +15,7 @@ class SamplingMethod(object):
         return
 
 
-class LeastConfidentAL(SamplingMethod):
+class LeastConfiDence(SamplingMethod):
     def __init__(self):
         return
 
@@ -55,7 +55,7 @@ class MarginAL(SamplingMethod):
         return samples
 
 
-class EntropyAL(SamplingMethod):
+class Entropy(SamplingMethod):
 
     def __init__(self):
         return
@@ -108,18 +108,23 @@ class GraphDensity(SamplingMethod):
             self.graph_density[i] = adjacency_matrix[i, :].sum() / (adjacency_matrix[i, :] > 0).sum()
         self.starting_density = copy.deepcopy(self.graph_density)
 
+    def reverse(self):
+        self.graph_density = self.starting_density
+
     def select_samples(self, N=None, already_selected=None, **kwargs):
         if N is None:
             N = self.X.shape[0]
         if already_selected is None:
             already_selected = []
-        samples = set()
+        samples = list()
+        print(self.graph_density)
         self.graph_density[already_selected] = min(self.graph_density) - 1
+        print(self.graph_density)
         while len(samples) < N:
             selected = np.argmax(self.graph_density)
             neighbors = (self.adjacency_matrix[selected, :] > 0).nonzero()[1]
             self.graph_density[neighbors] = self.graph_density[neighbors] - self.graph_density[selected]
-            samples.add(selected)
+            samples.append(selected)
             self.graph_density[already_selected] = min(self.graph_density) - 1
-            self.graph_density[list(samples)] = min(self.graph_density) - 1
+            self.graph_density[samples] = min(self.graph_density) - 1
         return list(samples)
