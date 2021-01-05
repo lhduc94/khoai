@@ -1,5 +1,4 @@
 
-
 def create_ngrams(tokens, ngram=2):
     """Create n_grams"""
     new_tokens = []
