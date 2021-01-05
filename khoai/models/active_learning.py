@@ -17,9 +17,10 @@ class SamplingMethod(object):
 
 class LeastConfidenceAL(SamplingMethod):
     def __init__(self):
+        super().__init__()
         return
 
-    def select_samples(self, y_pred_prob, N=None, already_selected=None, **kwargs):
+    def select_samples(self, y_pred_prob, threshold=0, N=None, already_selected=None, **kwargs):
         y_pred_prob = np.array(y_pred_prob)
         if N is None:
             N = y_pred_prob.shape[0]
@@ -31,16 +32,18 @@ class LeastConfidenceAL(SamplingMethod):
         uncertainty = 1 - argmax_y_pred
         rank_ind = np.argsort(uncertainty)[::-1]
         rank_ind = [i for i in rank_ind if i not in already_selected]
-        samples = rank_ind[:N]
-        return samples
+        uncertain_samples = rank_ind[:N]
+        certain_samples = np.where(uncertainty <= threshold)[0]
+        return certain_samples, uncertain_samples
 
 
 class MarginAL(SamplingMethod):
     """https://arxiv.org/pdf/1906.00025v1.pdf"""
     def __init__(self):
+        super().__init__()
         return
 
-    def select_samples(self, y_pred_prob, N=None, already_selected=None, **kwargs):
+    def select_samples(self, y_pred_prob, threshold=0, N=None, already_selected=None, **kwargs):
         y_pred_prob = np.array(y_pred_prob)
         if N is None:
             N = y_pred_prob.shape[0]
@@ -51,16 +54,18 @@ class MarginAL(SamplingMethod):
         min_margin = sorted_y_pred_prob[:, -1] - sorted_y_pred_prob[:, -2]
         rank_ind = np.argsort(min_margin)
         rank_ind = [i for i in rank_ind if i not in already_selected]
-        samples = rank_ind[:N]
-        return samples
+        uncertain_samples = rank_ind[:N]
+        certain_samples = np.where(min_margin <= threshold)[0]
+        return certain_samples, uncertain_samples
 
 
 class EntropyAL(SamplingMethod):
     """https://www.aclweb.org/anthology/C08-1143.pdf"""
     def __init__(self):
+        super().__init__()
         return
 
-    def select_samples(self, y_pred_prob, N=None, already_selected=None, **kwargs):
+    def select_samples(self, y_pred_prob, threshold=0, N=None, already_selected=None, **kwargs):
         y_pred_prob = np.array(y_pred_prob)
         if N is None:
             N = y_pred_prob.shape[0]
@@ -72,14 +77,16 @@ class EntropyAL(SamplingMethod):
         entropy = -np.sum(entropy, axis=1)
         rank_ind = np.argsort(entropy)[::-1]
         rank_ind = [i for i in rank_ind if i not in already_selected]
-        samples = rank_ind[:N]
-        return samples
+        uncertain_samples = rank_ind[:N]
+        certain_samples = np.where(entropy <= threshold)[0]
+        return certain_samples, uncertain_samples
 
 
 class GraphDensityAL(SamplingMethod):
     """https://www.mpi-inf.mpg.de/fileadmin/inf/d2/Research_projects_files/EbertCVPR2012.pdf"""
 
     def __init__(self, X, n_neighbors=10):
+        super().__init__()
         self.X = X
         self.n_neighbors = n_neighbors
         self.gamma = 1. / (self.X.shape[1] * self.X.var())
