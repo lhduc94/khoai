@@ -33,7 +33,7 @@ class LeastConfidenceAL(SamplingMethod):
         rank_ind = np.argsort(uncertainty)[::-1]
         rank_ind = [i for i in rank_ind if i not in already_selected]
         uncertain_samples = rank_ind[:N]
-        certain_samples = np.where(uncertainty <= threshold)[0]
+        certain_samples = list(np.where(uncertainty <= threshold)[0])
         return certain_samples, uncertain_samples
 
 
@@ -55,7 +55,7 @@ class MarginAL(SamplingMethod):
         rank_ind = np.argsort(min_margin)
         rank_ind = [i for i in rank_ind if i not in already_selected]
         uncertain_samples = rank_ind[:N]
-        certain_samples = np.where(min_margin <= threshold)[0]
+        certain_samples = list(np.where(min_margin <= threshold)[0])
         return certain_samples, uncertain_samples
 
 
@@ -78,7 +78,7 @@ class EntropyAL(SamplingMethod):
         rank_ind = np.argsort(entropy)[::-1]
         rank_ind = [i for i in rank_ind if i not in already_selected]
         uncertain_samples = rank_ind[:N]
-        certain_samples = np.where(entropy <= threshold)[0]
+        certain_samples = list(np.where(entropy <= threshold)[0])
         return certain_samples, uncertain_samples
 
 
