@@ -70,7 +70,7 @@ class EntropyAL(SamplingMethod):
         entropy = np.log(y_pred_prob) * y_pred_prob
         entropy = np.nan_to_num(entropy, 1E-6)
         entropy = -np.sum(entropy, axis=1)
-        rank_ind = np.argsort(entropy)
+        rank_ind = np.argsort(entropy)[::-1]
         rank_ind = [i for i in rank_ind if i not in already_selected]
         samples = rank_ind[:N]
         return samples

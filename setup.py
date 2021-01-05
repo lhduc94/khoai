@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="khoai",
-    version="0.1.1_2",
+    version="0.1.1_4",
     author="Lê Huỳnh Đức",
     author_email="lhduc94@gmail.com",
     description="A small datascience package",
