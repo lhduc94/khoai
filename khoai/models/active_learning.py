@@ -117,9 +117,7 @@ class GraphDensityAL(SamplingMethod):
         if already_selected is None:
             already_selected = []
         samples = list()
-        print(self.graph_density)
         self.graph_density[already_selected] = min(self.graph_density) - 1
-        print(self.graph_density)
         while len(samples) < N:
             selected = np.argmax(self.graph_density)
             neighbors = (self.adjacency_matrix[selected, :] > 0).nonzero()[1]
@@ -128,3 +126,4 @@ class GraphDensityAL(SamplingMethod):
             self.graph_density[already_selected] = min(self.graph_density) - 1
             self.graph_density[samples] = min(self.graph_density) - 1
         return list(samples)
+
