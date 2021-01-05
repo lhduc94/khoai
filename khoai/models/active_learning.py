@@ -16,11 +16,19 @@ class SamplingMethod(object):
 
 
 class LeastConfidenceAL(SamplingMethod):
-    def __init__(self):
+    def __init__(self, threshold):
         super().__init__()
+        self.threshold = threshold
+        self.uncertainty = None
         return
 
-    def select_samples(self, y_pred_prob, threshold=0, N=None, already_selected=None, **kwargs):
+    def update_threshold(self, threshold):
+        self.threshold = threshold
+
+    def get_score(self):
+        return self.uncertainty
+
+    def select_samples(self, y_pred_prob, N=None, already_selected=None, **kwargs):
         y_pred_prob = np.array(y_pred_prob)
         if N is None:
             N = y_pred_prob.shape[0]
@@ -33,17 +41,25 @@ class LeastConfidenceAL(SamplingMethod):
         rank_ind = np.argsort(uncertainty)[::-1]
         rank_ind = [i for i in rank_ind if i not in already_selected]
         uncertain_samples = rank_ind[:N]
-        certain_samples = list(np.where(uncertainty <= threshold)[0])
+        certain_samples = list(np.where(uncertainty - self.threshold <= 1E-6)[0])
         return certain_samples, uncertain_samples
 
 
 class MarginAL(SamplingMethod):
     """https://arxiv.org/pdf/1906.00025v1.pdf"""
-    def __init__(self):
+    def __init__(self, threshold):
         super().__init__()
+        self.threshold = threshold
+        self.min_margin = None
         return
 
-    def select_samples(self, y_pred_prob, threshold=0, N=None, already_selected=None, **kwargs):
+    def update_threshold(self, threshold):
+        self.threshold = threshold
+
+    def get_score(self):
+        return self.min_margin
+
+    def select_samples(self, y_pred_prob, N=None, already_selected=None, **kwargs):
         y_pred_prob = np.array(y_pred_prob)
         if N is None:
             N = y_pred_prob.shape[0]
@@ -55,17 +71,26 @@ class MarginAL(SamplingMethod):
         rank_ind = np.argsort(min_margin)
         rank_ind = [i for i in rank_ind if i not in already_selected]
         uncertain_samples = rank_ind[:N]
-        certain_samples = list(np.where(min_margin <= threshold)[0])
+        certain_samples = list(np.where(min_margin - self.threshold <= 1E-6)[0])
+        self.min_margin = min_margin
         return certain_samples, uncertain_samples
 
 
 class EntropyAL(SamplingMethod):
     """https://www.aclweb.org/anthology/C08-1143.pdf"""
-    def __init__(self):
+    def __init__(self, threshold):
         super().__init__()
+        self.threshold = threshold
+        self.entropy = None
         return
 
-    def select_samples(self, y_pred_prob, threshold=0, N=None, already_selected=None, **kwargs):
+    def update_threshold(self, threshold):
+        self.threshold = threshold
+
+    def get_score(self):
+        return self.entropy
+
+    def select_samples(self, y_pred_prob, N=None, already_selected=None, **kwargs):
         y_pred_prob = np.array(y_pred_prob)
         if N is None:
             N = y_pred_prob.shape[0]
@@ -78,7 +103,8 @@ class EntropyAL(SamplingMethod):
         rank_ind = np.argsort(entropy)[::-1]
         rank_ind = [i for i in rank_ind if i not in already_selected]
         uncertain_samples = rank_ind[:N]
-        certain_samples = list(np.where(entropy <= threshold)[0])
+        certain_samples = list(np.where(entropy - self.threshold <= 1E-6)[0])
+        self.entropy = entropy
         return certain_samples, uncertain_samples
 
 
