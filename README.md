@@ -15,4 +15,3 @@ or install from my source code by following:
 ```python setup.py install```
 
 Documentation:
-https://medium.com/lehuynhduc/khoai-package-3f7c75b37485
