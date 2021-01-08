@@ -15,4 +15,4 @@ class UniformAL(SamplingMethod):
         if already_selected is None:
             already_selected = []
         samples = [i for i in range(self.X.shape[0]) if i not in already_selected]
-        return samples[0:N]
+        return [], samples[0:N]

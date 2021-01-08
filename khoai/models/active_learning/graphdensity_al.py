@@ -59,4 +59,4 @@ class GraphDensityAL(SamplingMethod):
             samples.append(selected)
             self.graph_density[already_selected] = min(self.graph_density) - 1
             self.graph_density[samples] = min(self.graph_density) - 1
-        return list(samples)
+        return [], list(samples)

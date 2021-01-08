@@ -7,7 +7,6 @@ class LeastConfidenceAL(SamplingMethod):
         super().__init__()
         self.threshold = threshold
         self.uncertainty = None
-        return
 
     def update_threshold(self, threshold):
         self.threshold = threshold
@@ -30,5 +29,6 @@ class LeastConfidenceAL(SamplingMethod):
         rank_ind = [i for i in rank_ind if i not in already_selected]
         uncertain_samples = rank_ind[:N]
         certain_samples = list(np.where(uncertainty - self.threshold <= 1E-6)[0])
+        certain_samples = [i for i in certain_samples if i not in already_selected]
         self.uncertainty = uncertainty
         return certain_samples, uncertain_samples
