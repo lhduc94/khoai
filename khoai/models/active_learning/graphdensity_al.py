@@ -43,7 +43,7 @@ class GraphDensityAL(SamplingMethod):
         self.starting_density = copy.deepcopy(self.graph_density)
 
     def reverse(self):
-        self.graph_density = self.starting_density
+        self.graph_density = copy.deepcopy(self.starting_density)
 
     def select_samples(self, N=None, already_selected=None, **kwargs):
         if N is None:
