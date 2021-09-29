@@ -3,17 +3,24 @@ import seaborn as sns
 import numpy as np
 
 
-def heatmap(x, y, size, color, **params):
+def heatmap(x, y, size, color, xrange='both', **params):
     n_colors = params.get('n_colors', 256)
-    palette = sns.diverging_palette(20, 220, n=n_colors)
-    color_min, color_max = [-1, 1]
-
+    if xrange=='both':
+        palette = sns.diverging_palette(20, 220, n=n_colors)
+        color_min, color_max = [-1, 1]
+    if xrange=='positive':
+        palette=sns.color_palette("crest",n_colors=n_colors)
+        color_min, color_max = [0, 1]
+    if xrange=='negative':
+        palette=sns.color_palette("flare",n_colors=n_colors)[::-1]
+        color_min, color_max = [-1, 0]
     def value_to_color(val):
         val_position = float((val - color_min)) / (color_max - color_min)
         ind = int(val_position * (n_colors - 1))
         return palette[ind]
 
     figure = plt.figure(figsize=params.get('figsize', None))
+    figure.set_facecolor('#C1D7F5')
     plot_grid = plt.GridSpec(1, 15, hspace=0.2, wspace=0.1)
     ax = plt.subplot(plot_grid[:, :-1])
 
@@ -27,14 +34,14 @@ def heatmap(x, y, size, color, **params):
         y=y.map(y_to_num),
         s=size * params.get('size_scale', 500),
         c=color.map(value_to_color),
-        marker=params.get('marker', 's')
+        marker=params.get('marker', 'o')
     )
 
     ax.set_xticks([x_to_num[v] for v in x_labels])
     ax.set_xticklabels(x_labels, rotation=params.get('x_rotation', 45), horizontalalignment='right')
     ax.set_yticks([y_to_num[v] for v in y_labels])
     ax.set_yticklabels(y_labels)
-
+    ax.set_title(params.get('title',''))
     ax = plt.subplot(plot_grid[:, -1])
 
     col_x = [0] * len(palette)
