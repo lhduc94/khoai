@@ -1,6 +1,6 @@
 [project]
 name = "khoai"
-version = "0.1.1-15"
+version = "0.1.1.post15"
 description = "A simple Python package for example purposes."
 authors = [
     { name="Lê Huỳnh Đức", email="lhduc94@gmail.com" }
@@ -14,7 +14,12 @@ classifiers = [
     "Operating System :: OS Independent"
 ]
 dependencies = [
+    "matplotlib>=3.7.5",
+    "networkx>=3.1",
+    "numpy>=1.24.4",
     # Add your project dependencies here, e.g. "requests"
+    "pandas>=2.0.3",
+    "seaborn>=0.13.2",
 ]
 
 [project.urls]
