@@ -1,19 +1,22 @@
 [project]
 name = "khoai"
-version = "0.1.1-14"
-description = "A small datascience package"
-readme = "README.md"
-requires-python = ">=3.13"
+version = "0.1.1-15"
+description = "A simple Python package for example purposes."
 authors = [
-    { name = "Lê Huỳnh Đức", email = "lhduc94@gmail.com" }
+    { name="Lê Huỳnh Đức", email="lhduc94@gmail.com" }
 ]
-dependencies = [
-    "networkx>=3.6",
-    "numpy>=2.3.5",
-    "pandas>=2.3.3",
-]
+readme = "README.md"
+license = { file = "LICENSE" }
+requires-python = ">=3.8"
 classifiers = [
     "Programming Language :: Python :: 3",
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent"
 ]
+dependencies = [
+    # Add your project dependencies here, e.g. "requests"
+]
+
+[project.urls]
+"Homepage" = "https://pypi.org/project/khoai/"
+"Repository" = "https://github.com/lhduc94/khoai"
