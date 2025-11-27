@@ -1,0 +1,19 @@
+[project]
+name = "khoai"
+version = "0.1.1-14"
+description = "A small datascience package"
+readme = "README.md"
+requires-python = ">=3.13"
+authors = [
+    { name = "Lê Huỳnh Đức", email = "lhduc94@gmail.com" }
+]
+dependencies = [
+    "networkx>=3.6",
+    "numpy>=2.3.5",
+    "pandas>=2.3.3",
+]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent"
+]
